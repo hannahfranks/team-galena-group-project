@@ -43,6 +43,22 @@ def db_connection(credentials):
 def close_conn(conn):
     conn.close()
 
+# function to get table names from db
+def get_table_names():
+    return [
+        "counterparty", 
+        "currency", 
+        "department", 
+        "design", 
+        "staff", 
+        "sales_order", 
+        "address", 
+        "payment", 
+        "purchase_order", 
+        "payment_type", 
+        "transaction"
+        ]
+
 
 
 
