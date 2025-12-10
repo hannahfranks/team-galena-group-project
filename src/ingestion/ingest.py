@@ -1,6 +1,7 @@
 import boto3
 from botocore.exceptions import ClientError
 import json
+import pg8000
 
 # function to get db credentials from aws secrets manager
 def get_secret():
@@ -26,5 +27,22 @@ def get_secret():
     credentials = json.loads(secret)
 
     return credentials
+
+# function to create db connection
+def db_connection(credentials):
+    conn = pg8000.connect(
+        user=credentials["username"], 
+        password=credentials["password"], 
+        host=credentials["host"],
+        database=credentials["database"],
+        port=credentials["port"]
+    )
+    return conn
+
+# function to close connection
+def close_conn(conn):
+    conn.close()
+
+
 
 
