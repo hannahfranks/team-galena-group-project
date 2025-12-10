@@ -1,7 +1,10 @@
+asn1crypto==1.5.1
 boto3==1.42.6
 botocore==1.42.6
 jmespath==1.0.1
+pg8000==1.31.5
 python-dateutil==2.9.0.post0
 s3transfer==0.16.0
+scramp==1.4.6
 six==1.17.0
 urllib3==2.6.1
