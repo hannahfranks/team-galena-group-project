@@ -22,4 +22,3 @@ def test_extract_table_data_returns_dict_of_len_11():
     result = extract_table_data(table_names, conn)
     assert len(result) == 11
     assert type(result) == list
-    
