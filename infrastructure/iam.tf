@@ -61,3 +61,48 @@ resource "aws_iam_role_policy_attachment" "state_access" {
     role = aws_iam_role.terraform.name
     policy_arn = aws_iam_policy.terraform_state_access.arn
 }
+
+#IAM role for Ingestion Lambda
+
+data "aws_iam_role" "ingestion_lambda_role" {
+    name = "ingestion_lambda_role"
+
+    assume_role_policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [
+            {
+                Action = "sts:AssumeRole"
+                Effect = "Allow"
+                Principal = {
+                    Service = "lambda.amazonaws.com"
+                }
+            }
+        ]
+    })
+}
+
+#IAM Policy for write-only s3 access
+
+resource "aws_iam_policy" "ingestion_lambda_policy" {
+    name = "ingestion_lambda_write_to_s3"
+    description = "write-only access data in ingestion s3"
+
+    policy = jsonencode({
+        version = "2012-10-17"
+        Statement = [
+        {
+            Action = [
+                "s3:PutObject"
+            ]
+            Resource = "arn:aws:s3:::s3-ingestion-bucket-team-galena/*"
+        }
+        ]
+    })
+}
+
+#Attach policy to role
+
+resource "aws_secretsmanager_secret_policy" "ingestion_lambda_policy" {
+    role = aws_iam_role.ingestion_lambda_role.name
+    policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
+}
