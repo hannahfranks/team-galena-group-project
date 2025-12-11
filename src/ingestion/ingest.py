@@ -3,6 +3,14 @@ from botocore.exceptions import ClientError
 import json
 from pg8000.native import Connection
 
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+from io import BytesIO
+from datetime import datetime
+
+s3 = boto3.client("s3")
+
 # function to get db credentials from aws secrets manager
 def get_secret():
 
@@ -63,18 +71,42 @@ def get_table_names(conn):
     return table_names
 
 # function to extract data from each table
+#use parameterized query to avoid sql injection
 def extract_table_data(table_names, conn):
 
-    data = []
+    data = {}
     for table_name in table_names:
-        query = "SELECT * FROM " + table_name
+        query = f"SELECT * FROM {table_name}"
         result = conn.run(query)
-        data.append(result)
+        data[table_name] = result
 
     return data
 
+def save_tables_as_parquet(tables_data, bucket_name):
+    
+    for table_name, rows in tables_data.items():
+        if not rows:
+            continue
+        
+        # Convert result rows to a DataFrame
+        df = pd.DataFrame(rows)
+        
+        timestamp = datetime.now().strftime("%d_%m_%Y_%H:%M:%S")
 
+        # Convert to Parquet in memory
+        table = pa.Table.from_pandas(df)
+        buffer = BytesIO()
+        pq.write_table(table, buffer)
 
+        # Upload to S3
+        s3.put_object(
+            Bucket=bucket_name,
+            Key=f"{table_name}_{timestamp}.parquet",
+            Body=buffer.getvalue(),
+            ContentType="application/octet-stream"
+        )
+
+    
 
 
 
