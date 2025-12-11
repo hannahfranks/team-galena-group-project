@@ -1,7 +1,7 @@
 import boto3
 from botocore.exceptions import ClientError
 import json
-import pg8000
+from pg8000.native import Connection
 
 # function to get db credentials from aws secrets manager
 def get_secret():
@@ -30,11 +30,11 @@ def get_secret():
 
 # function to create db connection
 def db_connection(credentials):
-    conn = pg8000.connect(
+    conn = Connection(
         user=credentials["username"], 
         password=credentials["password"], 
         host=credentials["host"],
-        database=credentials["database"],
+        database=credentials["dbname"],
         port=credentials["port"]
     )
     return conn
@@ -44,20 +44,28 @@ def close_conn(conn):
     conn.close()
 
 # function to get table names from db
-def get_table_names():
-    return [
-        "counterparty", 
-        "currency", 
-        "department", 
-        "design", 
-        "staff", 
-        "sales_order", 
-        "address", 
-        "payment", 
-        "purchase_order", 
-        "payment_type", 
-        "transaction"
-        ]
+def get_table_names(conn, credentials):
+    
+    credentials = get_secret()
+    conn = db_connection(credentials)
+
+    query = """
+        SELECT table_name 
+        FROM information_schema.tables
+        WHERE table_schema='public'
+    """
+    result = conn.run(sql=query)
+
+    # convert to list of strings and remove _prisma_migrations
+    table_names = []
+    for name in result:
+        if type(name) is list:
+            for item in name:
+                table_names.append(item)
+    table_names.remove('_prisma_migrations')
+    return table_names
+
+
 
 
 
