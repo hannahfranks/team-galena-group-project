@@ -43,18 +43,15 @@ def db_connection(credentials):
 def close_conn(conn):
     conn.close()
 
-# function to get table names from db
-def get_table_names(conn, credentials):
+# function to get list of table names from db
+def get_table_names(conn):
     
-    credentials = get_secret()
-    conn = db_connection(credentials)
-
     query = """
         SELECT table_name 
         FROM information_schema.tables
-        WHERE table_schema='public'
+        WHERE table_schema='public';
     """
-    result = conn.run(sql=query)
+    result = conn.run(query)
 
     # convert to list of strings and remove _prisma_migrations
     table_names = []
@@ -64,6 +61,20 @@ def get_table_names(conn, credentials):
                 table_names.append(item)
     table_names.remove('_prisma_migrations')
     return table_names
+
+# function to extract data from each table
+def extract_table_data(table_names, conn):
+
+    data = []
+    for table_name in table_names:
+        query = "SELECT * FROM " + table_name
+        result = conn.run(query)
+        data.append(result)
+
+    return data
+
+
+
 
 
 
