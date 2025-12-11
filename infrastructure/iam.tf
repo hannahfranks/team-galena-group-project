@@ -64,7 +64,7 @@ resource "aws_iam_role_policy_attachment" "state_access" {
 
 #IAM role for Ingestion Lambda
 
-data "aws_iam_role" "ingestion_lambda_role" {
+resource "aws_iam_role" "ingestion_lambda_role" {
     name = "ingestion_lambda_role"
 
     assume_role_policy = jsonencode({
@@ -102,7 +102,7 @@ resource "aws_iam_policy" "ingestion_lambda_policy" {
 
 #Attach policy to role
 
-resource "aws_secretsmanager_secret_policy" "ingestion_lambda_policy" {
+resource "aws_iam_role_policy_attachment" "ingestion_lambda_policy" {
     role = aws_iam_role.ingestion_lambda_role.name
     policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
 }
