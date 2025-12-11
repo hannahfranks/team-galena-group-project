@@ -32,3 +32,8 @@ resource "aws_s3_bucket_public_access_block" "public_block" {
   restrict_public_buckets = true
   ignore_public_acls      = true
 }
+
+#Create Lambda S3
+resource "aws_s3_bucket" "ingestion_lambda" {
+  bucket = "galena-s3-ingestion-lambda-bucket"
+}
