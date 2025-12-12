@@ -106,7 +106,26 @@ def save_tables_as_parquet(tables_data, bucket_name):
             ContentType="application/octet-stream"
         )
 
+# lambda handler to execute ingestion process
+def lambda_handler(event, context):
     
+    # get the db secrets from aws secret manager
+    credentials = get_secret()
+
+    # connect to db
+    conn = db_connection(credentials)
+
+    # get all the table names 
+    table_names = get_table_names(conn)
+
+    # extract data from all the tables and return a dictionary of tables
+    tables_data = extract_table_data(table_names, conn)
+
+    # transform data to parquet and save to s3
+    data = save_tables_as_parquet(tables_data, "s3-ingestion-bucket-team-galena") 
+
+    # close db connection
+    close_conn(conn) 
 
 
 
