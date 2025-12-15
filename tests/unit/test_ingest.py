@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from src.ingestion.ingest import get_table_names, get_secret, db_connection, extract_table_data
+from src.ingestion.ingest import get_table_names, extract_table_data
 
 def test_get_table_names_returns_list_of_eleven_table_names():
     mock_conn = MagicMock()
