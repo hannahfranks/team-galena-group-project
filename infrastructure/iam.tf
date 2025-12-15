@@ -106,3 +106,50 @@ resource "aws_iam_role_policy_attachment" "ingestion_lambda_policy" {
     role = aws_iam_role.ingestion_lambda_role.name
     policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
 }
+
+
+#IAM role for transformation Lambda
+resource "aws_iam_role" "transformation_lambda_role" {
+  name = "transformation-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+#IAM Policy for transformation_lambda_role to s3 access 
+resource "aws_iam_policy" "transformation_lambda_policy" {
+    name = "transformation-lambda-policy"
+    description = "write-only access data in transformation s3"
+
+    policy = jsonencode({
+        version = "2012-10-17"
+        Statement = [
+{
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.transformation_bucket}",
+          "arn:aws:s3:::${var.transformation_bucket}/*"
+        ]
+      }
+        ]
+    })
+}
+
+#Attach policy to role
+resource "aws_iam_role_policy_attachment" "transformation_lambda_policy" {
+    role = aws_iam_role.transformation_lambda_role.name
+    policy_arn = aws_iam_policy.transformation_lambda_policy.arn
+}
