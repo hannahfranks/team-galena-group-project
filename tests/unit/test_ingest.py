@@ -28,30 +28,10 @@ from unittest.mock import patch, MagicMock
 from src.ingestion.ingest import get_table_names, get_secret, db_connection, extract_table_data
 import pyarrow as pa
 
-# Mocking secrets, database connection, and table extraction
-@patch('src.ingestion.ingest.get_secret')
-@patch('src.ingestion.ingest.db_connection')
-@patch('src.ingestion.ingest.get_table_names')
-@patch('src.ingestion.ingest.extract_table_data')
-
-def test_get_table_names_returns_list_of_eleven_table_names(mock_extract, mock_tables, mock_conn, mock_secret):
-    # Mock return values
-    #mock_secret.return_value = {'user': 'test', 'password': 'test'}
-    #mock_conn.return_value = MagicMock()
-    mock_tables.return_value = ['counterparty', 'address', 'department', 'purchase_order', 'staff', 'payment_type', 'payment', 'transaction', 'design', 'sales_order', 'currency']
-    #mock_extract.return_value = [{'id': 1}, {'id': 2}]
-    
-    # Execute pipeline functions with mocks
-    credentials = get_secret()
-    conn = db_connection(credentials)
-    result = get_table_names(conn)
-    #result = extract_table_data(table_names, conn) 
-
-    
-    # Validate
-    # assert credentials == {'user': 'test', 'password': 'test'}
-    # assert table_names == ['counterparty', 'address', 'department']
-    # assert result == [{'id': 1}, {'id': 2}]
+def test_get_table_names_returns_list_of_eleven_table_names():
+    mock_conn = MagicMock()
+    mock_conn.run.return_value = ['counterparty', 'address', 'department', 'purchase_order', 'staff', 'payment_type', 'payment', 'transaction', 'design', 'sales_order', 'currency']
+    result = get_table_names(mock_conn)
     assert len(result) == 11
 
 @patch('src.ingestion.ingest.get_secret')
