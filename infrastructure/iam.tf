@@ -106,3 +106,4 @@ resource "aws_iam_role_policy_attachment" "ingestion_lambda_policy" {
     role = aws_iam_role.ingestion_lambda_role.name
     policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
 }
+

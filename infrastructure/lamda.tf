@@ -29,3 +29,4 @@ resource "aws_s3_object" "ingestion_lambda_zip" {
   key = "ingestion_lambda_function.zip"
   source = data.archive_file.ingestion_lambda_zip.output_path
 }
+
