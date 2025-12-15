@@ -30,6 +30,7 @@ resource "aws_s3_object" "ingestion_lambda_zip" {
   source = data.archive_file.ingestion_lambda_zip.output_path
 }
 
+<<<<<<< HEAD
 # transformation lambda
 resource "aws_lambda_function" "transformation_lambda" {
   function_name = "transformation_lambda_function"
@@ -61,3 +62,5 @@ resource "aws_s3_object" "transformation_lambda_zip" {
   key    = "transformation_lambda.zip"
   source = data.archive_file.transformation_lambda_zip.output_path
 }
+=======
+>>>>>>> b0654bb (Feat: trigger for ingestion lambda)
