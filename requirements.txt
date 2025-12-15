@@ -17,4 +17,8 @@ s3transfer==0.16.0
 scramp==1.4.6
 six==1.17.0
 tzdata==2025.2
+<<<<<<< HEAD
 urllib3==2.6.1    
+=======
+urllib3==2.6.1
+>>>>>>> 308ed77 (create-test-data-for-ingestion(95))
