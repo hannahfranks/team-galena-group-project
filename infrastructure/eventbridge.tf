@@ -1,5 +1,4 @@
 #Eventbridge trigger for ingestion
-
 resource "aws_cloudwatch_event_rule" "schedule_ingestion_lambda" {
     name = "database-ingestion-schedule"
     schedule_expression = "rate(1 minute)"
