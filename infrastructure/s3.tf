@@ -13,7 +13,7 @@ resource "aws_s3_bucket_versioning" "ingestion_versioning" {
 }
 
 # Encrypts everything automatically in ingestion-bucket
-resource "aws_s3_bucket_server_side_encryption_configuration" "default_encryption" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "ingestion_encryption" {
   bucket = aws_s3_bucket.ingestion_bucket.bucket
 
   rule {
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default_encryptio
 }
 
 # Ensures ingestion-bucket cannot become public
-resource "aws_s3_bucket_public_access_block" "public_block" {
+resource "aws_s3_bucket_public_access_block" "ingestion_public_block" {
   bucket = aws_s3_bucket.ingestion_bucket.id
 
   block_public_acls       = true
@@ -44,7 +44,7 @@ resource "aws_s3_bucket" "transformation_bucket" {
 }
 
 # Enable version history for transformation-bucket
-resource "aws_s3_bucket_versioning" "ingestion_versioning" {
+resource "aws_s3_bucket_versioning" "transformation_versioning" {
   bucket = aws_s3_bucket.transformation_bucket.id
 
   versioning_configuration {
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_versioning" "ingestion_versioning" {
 }
 
 # Encrypts everything automatically in transformation-bucket
-resource "aws_s3_bucket_server_side_encryption_configuration" "default_encryption" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "transformation_encryption" {
   bucket = aws_s3_bucket.transformation_bucket.bucket
 
   rule {
@@ -64,7 +64,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default_encryptio
 }
 
 # Ensures transformation-bucket cannot become public
-resource "aws_s3_bucket_public_access_block" "public_block" {
+resource "aws_s3_bucket_public_access_block" "transformation_public_block" {
   bucket = aws_s3_bucket.transformation_bucket.id
 
   block_public_acls       = true

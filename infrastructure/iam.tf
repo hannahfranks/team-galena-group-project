@@ -107,6 +107,7 @@ resource "aws_iam_role_policy_attachment" "ingestion_lambda_policy" {
     policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
 }
 
+<<<<<<< HEAD
 
 #IAM role for transformation Lambda
 resource "aws_iam_role" "transformation_lambda_role" {
@@ -153,3 +154,5 @@ resource "aws_iam_role_policy_attachment" "transformation_lambda_policy" {
     role = aws_iam_role.transformation_lambda_role.name
     policy_arn = aws_iam_policy.transformation_lambda_policy.arn
 }
+=======
+>>>>>>> b0654bb (Feat: trigger for ingestion lambda)
