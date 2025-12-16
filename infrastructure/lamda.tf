@@ -61,3 +61,4 @@ resource "aws_s3_object" "transformation_lambda_zip" {
   key    = "transformation_lambda.zip"
   source = data.archive_file.transformation_lambda_zip.output_path
 }
+
