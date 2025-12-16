@@ -10,7 +10,7 @@ resource "aws_cloudwatch_event_target" "ingestion_lambda" {
     arn = aws_lambda_function.ingestion_lambda.arn
 }
 
-resource "aws_lambda_permission" "eventbridge" {
+resource "aws_lambda_permission" "ingestion_eventbridge" {
     statement_id = "AllowEventBridgeInvoke"
     action = "lambda:InvokeFunction"
     function_name = aws_lambda_function.ingestion_lambda.function_name
