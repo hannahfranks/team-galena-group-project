@@ -88,9 +88,10 @@ resource "aws_iam_policy" "ingestion_lambda_policy" {
     description = "write-only access data in ingestion s3"
 
     policy = jsonencode({
-        version = "2012-10-17"
+        Version = "2012-10-17"
         Statement = [
         {
+            Effect = "Allow"
             Action = [
                 "s3:PutObject"
             ]
@@ -106,7 +107,6 @@ resource "aws_iam_role_policy_attachment" "ingestion_lambda_policy" {
     role = aws_iam_role.ingestion_lambda_role.name
     policy_arn = aws_iam_policy.ingestion_lambda_policy.arn
 }
-
 
 #IAM role for transformation Lambda
 resource "aws_iam_role" "transformation_lambda_role" {
@@ -130,7 +130,7 @@ resource "aws_iam_policy" "transformation_lambda_policy" {
     description = "write-only access data in transformation s3"
 
     policy = jsonencode({
-        version = "2012-10-17"
+        Version = "2012-10-17"
         Statement = [
 {
         Effect = "Allow"
@@ -140,8 +140,8 @@ resource "aws_iam_policy" "transformation_lambda_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::${var.transformation_bucket}",
-          "arn:aws:s3:::${var.transformation_bucket}/*"
+          "arn:aws:s3:::s3-transformation-bucket-team-galena",
+          "arn:aws:s3:::s3-transformation-bucket-team-galena/*"
         ]
       }
         ]
