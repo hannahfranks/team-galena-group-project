@@ -83,11 +83,11 @@ def extract_table_data(table_names, conn):
     return data
 
 # function to add timestamps of each table to txt file in S3 bucket
-def save_ingestion_timestamp(timestamp):
+def save_ingestion_timestamp(table_name, timestamp):
 
     filename = "ingestion/last_ingestion_timestamp.txt"
 
-    content = timestamp
+    content = f"{table_name}_{timestamp}"
 
     with open("last_ingestion_timestamp.txt", "w") as f:
         f.write(content)
