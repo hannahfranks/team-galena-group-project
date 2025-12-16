@@ -82,6 +82,22 @@ def extract_table_data(table_names, conn):
 
     return data
 
+# function to add timestamps of each table to txt file in S3 bucket
+def save_ingestion_timestamp(table_name, timestamp):
+
+    filename = "ingestion/last_ingestion_timestamp.txt"
+
+    content = f"{table_name}_{timestamp}"
+
+    with open("last_ingestion_timestamp.txt", "w") as f:
+        f.write(content)
+
+    s3.put_object(
+        Bucket="s3-ingestion-bucket-team-galena",
+        Key=filename,
+        Body=content.encode("utf-8")
+    )
+
 def save_tables_as_parquet(tables_data, bucket_name):
     
     for table_name, rows in tables_data.items():
@@ -92,6 +108,9 @@ def save_tables_as_parquet(tables_data, bucket_name):
         df = pd.DataFrame(rows)
         
         timestamp = datetime.now().strftime("%d_%m_%Y_%H:%M:%S")
+
+        # Write timestamp to last_ingestion_timestamp S3 object 
+        save_ingestion_timestamp(timestamp)
 
         # Convert to Parquet in memory
         table = pa.Table.from_pandas(df)
