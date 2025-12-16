@@ -20,7 +20,7 @@ def get_timestamp(table):
 
     return table_timestamp
 
-# function to read in most recent data for ingested table
+# util function to read in most recent data for ingested table
 def read_most_recent_ingestion(table):
 
     timestamp = get_timestamp(table)
@@ -29,6 +29,6 @@ def read_most_recent_ingestion(table):
 
     table_data = BytesIO(response["Body"].read())
 
-    return pd.read_parquet(table_data)
+    return pd.read_parquet(table_data) # read in parquet file
 
 
