@@ -33,9 +33,28 @@ resource "aws_s3_bucket_public_access_block" "ingestion_public_block" {
   ignore_public_acls      = true
 }
 
+# event notification for ingestion s3 bucket
+resource "aws_s3_bucket_notification" "ingestion_notification" {
+  bucket = aws_s3_bucket.ingestion_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.transformation_lambda.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_suffix = ".parquet"
+  }
+  depends_on = [
+    aws_lambda_permission.allow_s3
+  ]
+}
+
 #Create Lambda S3
 resource "aws_s3_bucket" "ingestion_lambda" {
   bucket = "galena-s3-ingestion-lambda-bucket"
+}
+
+#Create Lambda S3 for transformation
+resource "aws_s3_bucket" "transformation_lambda_s3" {
+  bucket = "galena-s3-transformation-lambda-bucket"
 }
 
 # Creates the transformation-bucket

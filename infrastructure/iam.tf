@@ -140,8 +140,8 @@ resource "aws_iam_policy" "transformation_lambda_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::${var.transformation_bucket}",
-          "arn:aws:s3:::${var.transformation_bucket}/*"
+          "arn:aws:s3:::s3-transformation-bucket-team-galena",
+          "arn:aws:s3:::s3-transformation-bucket-team-galena/*"
         ]
       }
         ]
