@@ -96,6 +96,13 @@ resource "aws_iam_policy" "ingestion_lambda_policy" {
                 "s3:PutObject"
             ]
             Resource = "arn:aws:s3:::s3-ingestion-bucket-team-galena/*"
+        },
+        {
+            Effect = "Allow"
+            Action = [
+                "secretsmanager:GetSecretValue"
+            ]
+            Resource = "arn:aws:secretsmanager:eu-west-2:891807086100:secret:totesys/rds/credentials*"
         }
         ]
     })
@@ -154,3 +161,33 @@ resource "aws_iam_role_policy_attachment" "transformation_lambda_policy" {
     policy_arn = aws_iam_policy.transformation_lambda_policy.arn
 }
 
+#IAM role for cloudwatch logging 
+resource "aws_iam_policy" "cloudwatch_logs" {
+    name = "cloudwatch_logs"
+    policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [
+            {
+            Effect = "Allow"
+            Action = [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
+            Resource = "*"
+        }
+        ]
+    })
+}
+
+#Attach policy to ingestion lambda role 
+resource "aws_iam_role_policy_attachment" "ingestion_lambda_logs" {
+    role = aws_iam_role.ingestion_lambda_role.name
+    policy_arn = aws_iam_policy.cloudwatch_logs.arn
+}
+
+#Attach policy to transformation lambda role 
+resource "aws_iam_role_policy_attachment" "transformation_lambda_logs" {
+    role = aws_iam_role.transformation_lambda_role.name
+    policy_arn = aws_iam_policy.cloudwatch_logs.arn
+}
