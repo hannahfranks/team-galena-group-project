@@ -18,7 +18,9 @@ def test_transform_dim_currency_returns_df_with_columns_if_passed_empty_df():
     currency = pd.DataFrame()
     result = transform_dim_currency(currency)
     assert list(result) == ["currency_id", "currency_code", "currency_name"]
-    assert list(result.columns.values) == None
+    assert result["currency_id"].to_list() == []
+    assert result["currency_code"].to_list() == []
+    assert result["currency_name"].to_list() == []
 
 
 
