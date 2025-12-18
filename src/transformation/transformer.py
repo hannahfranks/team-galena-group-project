@@ -1,6 +1,8 @@
 from src.transformation.dim_location import transform_dim_location
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
+from src.transformation.dim_date import build_dim_date
+
 import boto3
 import pandas as pd
 from io import BytesIO
