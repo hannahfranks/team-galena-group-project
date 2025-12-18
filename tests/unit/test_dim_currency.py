@@ -1,5 +1,5 @@
 import pandas as pd
-from src.transformation.dim_currency import transform_dim_currency
+from src.transformation.dim_currency import transform_dim_currency, get_currencies
 
 def test_transform_dim_currency_returns_pd_df_with_correct_columns():
     # sample ingested currency table
@@ -45,5 +45,8 @@ def test_transform_dim_currency_creates_currency_name_based_on_currency_code():
     dim_currency = transform_dim_currency(currency)
     assert dim_currency["currency_name"].to_list() == ['Euro', 'GBP', 'USD']
 
-
+def test_get_currencies_returns_dict_of_currencies():
+    result = get_currencies
+    assert isinstance(result, dict)
+    assert result["eur"] == "Euro"
 
