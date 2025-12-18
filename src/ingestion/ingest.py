@@ -71,7 +71,7 @@ def get_table_names(conn):
     return table_names
 
 # function to extract data from each table
-#use parameterized query to avoid sql injection
+# use parameterized query to avoid sql injection
 def extract_table_data(table_names, conn):
 
     data = {}
@@ -82,36 +82,45 @@ def extract_table_data(table_names, conn):
 
     return data
 
-# function to add timestamps of each table to txt file in S3 bucket
-def save_ingestion_timestamp(table_name, timestamp):
+# function to write timestamps of most recent ingestion for each table to txt file in S3 bucket
+def save_ingestion_timestamps(table_timestamps):
 
-    filename = "ingestion/last_ingestion_timestamp.txt"
+    s3_key = "ingestion/last_ingestion_timestamps.txt" # path to upload timestamps to s3
+    local_path = "src/ingestion/last_ingestion_timestamps.txt" # path to save timestamps locally for quick access
 
-    content = f"{table_name}_{timestamp}"
+    # create timestamps content
+    content = "\n".join(
+        f"{table}_{timestamp}"
+        for table, timestamp in table_timestamps.items()
+    )
 
-    with open("last_ingestion_timestamp.txt", "w") as f:
+    # write to local file
+    with open(local_path, "w") as f:
         f.write(content)
 
+    # write to s3 
     s3.put_object(
         Bucket="s3-ingestion-bucket-team-galena",
-        Key=filename,
+        Key=s3_key,
         Body=content.encode("utf-8")
     )
 
+# function to write tables to s3 
 def save_tables_as_parquet(tables_data, bucket_name):
     
+    table_timestamps = {}
+
     for table_name, rows in tables_data.items():
         if not rows:
             continue
-        
+       
         # Convert result rows to a DataFrame
         df = pd.DataFrame(rows)
-        
+
+        # Create timestamp for table
         timestamp = datetime.now().strftime("%d_%m_%Y_%H:%M:%S")
-
-        # Write timestamp to last_ingestion_timestamp S3 object 
-        save_ingestion_timestamp(timestamp)
-
+        table_timestamps[table_name] = timestamp
+        
         # Convert to Parquet in memory
         table = pa.Table.from_pandas(df)
         buffer = BytesIO()
@@ -124,6 +133,9 @@ def save_tables_as_parquet(tables_data, bucket_name):
             Body=buffer.getvalue(),
             ContentType="application/octet-stream"
         )
+
+    # Overwrite timestamps of current ingestion to ingestion/last_ingestion_timestamps S3 object 
+    save_ingestion_timestamps(table_timestamps)
 
 # lambda handler to execute ingestion process
 def lambda_handler(event, context):
@@ -141,11 +153,12 @@ def lambda_handler(event, context):
     tables_data = extract_table_data(table_names, conn)
 
     # transform data to parquet and save to s3
-    data = save_tables_as_parquet(tables_data, "s3-ingestion-bucket-team-galena") 
+    save_tables_as_parquet(tables_data, "s3-ingestion-bucket-team-galena") 
 
     # close db connection
     close_conn(conn) 
 
+lambda_handler('test', '')
 
 
 
