@@ -40,5 +40,5 @@ def transform_dim_staff(df_staff: pd.DataFrame, df_department: pd.DataFrame) -> 
 
     df_staff = df_merged[DIM_STAFF_COLUMNS]
 
-    return df_staff
+    return df_staff  
         
