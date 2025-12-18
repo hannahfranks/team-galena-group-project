@@ -34,5 +34,16 @@ def test_transform_dim_currency_returns_correct_data_types():
     assert data_types["currency_code"] == 'O'
     assert data_types["currency_name"] == 'O'
 
+def test_transform_dim_currency_creates_currency_name_based_on_currency_code():
+    # sample ingested currency table
+    currency = pd.DataFrame({
+        "currency_id": [1, 2, 3],
+        "currency_code": ["EUR", "GBP", "USD"],
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    })
+    dim_currency = transform_dim_currency(currency)
+    assert dim_currency["currency_name"].to_list() == ['Euro', 'GBP', 'USD']
+
 
 
