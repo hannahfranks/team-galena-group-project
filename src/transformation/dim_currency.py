@@ -1,10 +1,21 @@
 import pandas as pd
+import requests
 
 DIM_CURRENCY_COLUMNS = [
     "currency_id",
     "currency_code",
     "currency_name"
 ]
+
+def get_currencies():
+    try:
+        response = requests.get("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json")
+        currencies_dict = response.json()
+        print(requests.__version__)
+        lower_dict = {k.lower(): v.lower() for k, v in currencies_dict.items()}
+        return lower_dict
+    except Exception as e:
+        print(e.message, e.args)
 
 def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
 
@@ -21,6 +32,9 @@ def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
     ].copy()
     dim_currency["currency_name"] = None
 
-    return dim_currency 
+    # generate currency_name based on currency_code
+    currencies = get_currencies()
 
+
+    return dim_currency 
 
