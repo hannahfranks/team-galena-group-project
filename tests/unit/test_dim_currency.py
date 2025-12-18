@@ -49,5 +49,16 @@ def test_get_currencies_returns_dict_of_lowercase_currencies():
     result = get_currencies()
     assert isinstance(result, dict)
     assert result["eur"] == "euro"
+
+def test_transform_dim_currency_returns_no_duplicate_currencies():
+    currency = pd.DataFrame({
+        "currency_id": [1, 2, 3],
+        "currency_code": ["EUR", "EUR", "USD"],
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    })
+    dim_currency = transform_dim_currency(currency)
+    assert len(dim_currency) == 2
+
   
 
