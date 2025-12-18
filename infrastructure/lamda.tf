@@ -2,8 +2,9 @@
 resource "aws_lambda_function" "ingestion_lambda" {
   function_name = "ingestion_lambda_function"
   role = aws_iam_role.ingestion_lambda_role.arn
-  handler = "lambda_function.lambda_handler"
-  runtime = "python3.14"
+  handler = "ingest.lambda_handler"
+  runtime = "python3.12"
+  timeout = 300
 
   s3_bucket = "galena-s3-ingestion-lambda-bucket"
   s3_key = aws_s3_object.ingestion_lambda_zip.key

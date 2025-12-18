@@ -2,7 +2,8 @@
 
 resource "aws_cloudwatch_event_rule" "schedule_ingestion_lambda" {
     name = "database-ingestion-schedule"
-    schedule_expression = "rate(1 minute)"
+    schedule_expression = "rate(15 minutes)"
+    state = "ENABLED"
 }
 
 resource "aws_cloudwatch_event_target" "ingestion_lambda" {
@@ -10,7 +11,7 @@ resource "aws_cloudwatch_event_target" "ingestion_lambda" {
     arn = aws_lambda_function.ingestion_lambda.arn
 }
 
-resource "aws_lambda_permission" "ingestion_eventbridge" {
+resource "aws_lambda_permission" "ingestion_trigger" {
     statement_id = "AllowEventBridgeInvoke"
     action = "lambda:InvokeFunction"
     function_name = aws_lambda_function.ingestion_lambda.function_name
