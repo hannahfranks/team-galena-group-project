@@ -46,11 +46,3 @@ def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
 
     return dim_currency 
 
-currency = pd.DataFrame({
-        "currency_id": [1, 2, 3],
-        "currency_code": ["EUR", "EUR", "USD"],
-        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
-        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
-    })
-dim_currency = transform_dim_currency(currency)
-print(dim_currency)
