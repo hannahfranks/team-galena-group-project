@@ -43,7 +43,7 @@ def test_transform_dim_currency_creates_currency_name_based_on_currency_code():
         "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
     })
     dim_currency = transform_dim_currency(currency)
-    assert dim_currency["currency_name"].to_list() == ['Euro', 'GBP', 'USD']
+    assert dim_currency["currency_name"].to_list() == ['euro', 'british pound', 'us dollar']
 
 def test_get_currencies_returns_dict_of_lowercase_currencies():
     result = get_currencies()
