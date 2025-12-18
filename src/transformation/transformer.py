@@ -11,7 +11,7 @@ BUCKETNAME = 's3-ingestion-bucket-team-galena'
 # util function to get timestamp of most recent ingestion
 def get_timestamp(table):
     
-    response = s3.get_object(Bucket=BUCKETNAME, Key='ingestion/last_ingestion_timestamp.txt')
+    response = s3.get_object(Bucket=BUCKETNAME, Key='ingestion/last_ingestion_timestamps.txt')
     timestamps = response['Body'].read().decode('utf-8')
 
     lines = [line.strip() for line in timestamps.splitlines() if line.strip()] # split into lines
@@ -19,7 +19,7 @@ def get_timestamp(table):
     table_timestamp = [line for line in lines if line.startswith(f"{table}_")] # find timestamp for specific table
 
     if not table_timestamp:
-        raise ValueError("No timestamp found for '{table}'")
+        raise ValueError(f"No timestamp found for: {table}")
 
     return table_timestamp
 

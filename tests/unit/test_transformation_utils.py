@@ -1,6 +1,6 @@
 import pandas as pd
 from unittest.mock import MagicMock, patch
-
+from src.transformation.transformer import get_timestamp
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 
 @patch("src.transformation.utils.save_parquet_to_s3.s3_client")
@@ -24,3 +24,9 @@ def test_write_parquet_to_s3_uploads_file(mock_s3_client):
     assert kwargs["Key"].endswith(".parquet")
     assert isinstance(kwargs["Body"], (bytes, bytearray))
     assert kwargs["ContentType"] == "application/octet-stream"
+
+# test timestamp 
+def test_get_timestamps_returns_list_of_str_of_most_recent_ingestion_time_for_table():
+    result = get_timestamp('address')
+    assert isinstance(result, list)
+    assert isinstance(result[0], str)
