@@ -18,10 +18,21 @@ def test_transform_dim_currency_returns_df_with_columns_if_passed_empty_df():
     currency = pd.DataFrame()
     result = transform_dim_currency(currency)
     assert list(result) == ["currency_id", "currency_code", "currency_name"]
-    assert result["currency_id"].to_list() == []
-    assert result["currency_code"].to_list() == []
-    assert result["currency_name"].to_list() == []
+    assert result.empty
 
+def test_transform_dim_currency_returns_correct_data_types():
+    # sample ingested currency table
+    currency = pd.DataFrame({
+        "currency_id": [1, 2, 3],
+        "currency_code": ["EUR", "GBP", "USD"],
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    })
+    dim_currency = transform_dim_currency(currency)
+    data_types = dim_currency.dtypes
+    assert data_types["currency_id"] == int
+    assert data_types["currency_code"] == 'O'
+    assert data_types["currency_name"] == 'O'
 
 
 
