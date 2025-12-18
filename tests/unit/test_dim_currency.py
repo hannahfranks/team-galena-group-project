@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 from src.transformation.dim_currency import transform_dim_currency, get_currencies
 
 # test 1
@@ -67,5 +68,22 @@ def test_transform_dim_currency_returns_no_duplicate_currencies():
     assert len(dim_currency) == 2
     assert dim_currency["currency_code"].tolist() == ['eur', 'usd']
 
-  
+# test 7
+def test_transform_dim_currency_raises_error_for_invalid_currency_code():
+    
+    currency = pd.DataFrame({
+            "currency_id": [1, 2, 3],
+            "currency_code": ["X8?", "EUR", "USD"],
+            "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+            "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+        })
+    
+    with pytest.raises(Exception):
+        transform_dim_currency(currency)
+
+    
+
+
+
+
 
