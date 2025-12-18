@@ -30,3 +30,6 @@ def test_get_timestamps_returns_list_of_str_of_most_recent_ingestion_time_for_ta
     result = get_timestamp('address')
     assert isinstance(result, list)
     assert isinstance(result[0], str)
+    
+#test parser
+
