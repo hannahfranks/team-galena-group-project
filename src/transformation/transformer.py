@@ -1,6 +1,6 @@
 from src.transformation.dim_location import transform_dim_location
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
-
+from src.transformation.dim_staff import transform_dim_staff
 import boto3
 import pandas as pd
 from io import BytesIO
@@ -55,4 +55,27 @@ write_parquet_to_s3(
     df_location,
     bucket="s3-transformation-bucket-team-galena",
     key_prefix="dim_location"
+)
+
+# transformation for dim_staff
+df_staff = pd.DataFrame({
+    "staff_id": [101, 102],
+    "first_name": ["Alice", "Bob"],
+    "last_name": ["Johnson", "Smith"],
+    "department_id": [1, 2],
+    "email_address": ["alice.johnson@company.com", "bob.smith@company.com"]
+})
+
+df_department = pd.DataFrame({
+    "department_id": [1, 2],
+    "department_name": ["Human Resources", "Engineering"],
+    "location": ["New York", "San Francisco"]
+})
+
+dim_staff = transform_dim_staff(df_staff, df_department)
+
+write_parquet_to_s3(
+    dim_staff, 
+    bucket="s3-transformation-bucket-team-galena",
+    key_prefix="dim_staff"
 )
