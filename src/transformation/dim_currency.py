@@ -41,6 +41,10 @@ def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
     
     # generate currency_name column based on currency_code
     currencies = get_currencies()
+    # check for and handle invalid currency codes
+    invalid_codes = set(dim_currency["currency_code"]) - set(currencies.keys())
+    if invalid_codes:
+        raise ValueError(f"Invalid currency code: {invalid_codes}")
     dim_currency["currency_code"] = dim_currency["currency_code"].str.lower() # convert currency_code to lowercase
     dim_currency["currency_name"] = dim_currency["currency_code"].map(currencies) # map names to codes
 
