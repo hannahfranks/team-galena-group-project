@@ -23,7 +23,7 @@ def get_timestamp(table):
     if not table_timestamp:
         raise ValueError(f"No timestamp found for: {table}")
 
-    return table_timestamp
+    return table_timestamp[0]
 
 # util function to read in most recent data for ingested table
 def read_most_recent_ingestion(table):
