@@ -1,6 +1,7 @@
 from src.transformation.dim_location import transform_dim_location
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
+from src.transformation.dim_counterparty import transform_dim_counterparty
 import boto3
 import pandas as pd
 from io import BytesIO
@@ -78,4 +79,30 @@ write_parquet_to_s3(
     dim_staff, 
     bucket="s3-transformation-bucket-team-galena",
     key_prefix="dim_staff"
+)
+
+# transformation for dim_counterparty
+df_counterparty = pd.DataFrame({
+    "counterparty_id",
+    "counterparty_legal_name",
+    "legal_address_id"
+})        
+
+df_address = pd.date_range({
+    "address_id",
+    "address_line_1",
+    "address_line_2",
+    "district",
+    "city",
+    "postal_code",
+    "country",
+    "phone"
+})
+
+dim_counterparty = transform_dim_counterparty(df_counterparty, df_address)
+
+write_parquet_to_s3(
+    dim_counterparty, 
+    bucket="s3-transformation-bucket-team-galena",
+    key_prefix="dim_counterparty"
 )
