@@ -85,20 +85,20 @@ write_parquet_to_s3(
 
 # transformation for dim_counterparty
 df_counterparty = pd.DataFrame({
-    "counterparty_id",
-    "counterparty_legal_name",
-    "legal_address_id"
+    "counterparty_id": [1],
+    "counterparty_legal_name": ["Acme Corporation Ltd"],
+    "legal_address_id": [101]
 })        
 
 df_address = pd.date_range({
-    "address_id",
-    "address_line_1",
-    "address_line_2",
-    "district",
-    "city",
-    "postal_code",
-    "country",
-    "phone"
+    "address_id": [101],
+    "address_line_1": ["123 Market Street"],
+    "address_line_2": ["Suite 400"],
+    "district": ["Central Business District"],
+    "city": ["London"],
+    "postal_code": ["EC2A 3BX"],
+    "country": ["United Kingdom"],
+    "phone": ["+44 20 7946 0958"]
 })
 
 dim_counterparty = transform_dim_counterparty(df_counterparty, df_address)
