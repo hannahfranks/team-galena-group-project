@@ -11,7 +11,7 @@ s3 = boto3.client("s3")
 BUCKETNAME = 's3-ingestion-bucket-team-galena'
 
 # util function to get timestamp of most recent ingestion
-def get_timestamp(table):
+def get_timestamp(table: str) -> pd.DataFrame:
     
     response = s3.get_object(Bucket=BUCKETNAME, Key='ingestion/last_ingestion_timestamps.txt')
     timestamps = response['Body'].read().decode('utf-8')
@@ -26,7 +26,7 @@ def get_timestamp(table):
     return table_timestamp[0]
 
 # util function to read in most recent data for ingested table
-def read_most_recent_ingestion(table):
+def read_most_recent_ingestion(table: str) -> pd.DataFrame:
 
     timestamp = get_timestamp(table)
 
