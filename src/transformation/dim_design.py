@@ -25,6 +25,10 @@ def transform_dim_design(design: pd.DataFrame) -> pd.DataFrame:
     # select columns from df_design for dim_design 
     dim_design = df_design[DIM_DESIGN_COLUMNS].copy()
 
+    # standardise design_name values - capitalised and no leading and trailing whitespaces
+    dim_design["design_name"] = dim_design["design_name"].str.strip().str.title()
+    
     return dim_design
+
 
 
