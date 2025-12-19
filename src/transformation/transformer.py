@@ -1,6 +1,7 @@
 from src.transformation.dim_location import transform_dim_location
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
+from src.transformation.dim_counterparty import transform_dim_counterparty
 from src.transformation.dim_date import build_dim_date
 
 import boto3
@@ -82,6 +83,31 @@ write_parquet_to_s3(
     key_prefix="dim_staff"
 )
 
+# transformation for dim_counterparty
+df_counterparty = pd.DataFrame({
+    "counterparty_id": [1],
+    "counterparty_legal_name": ["Acme Corporation Ltd"],
+    "legal_address_id": [101]
+})        
+
+df_address = pd.date_range({
+    "address_id": [101],
+    "address_line_1": ["123 Market Street"],
+    "address_line_2": ["Suite 400"],
+    "district": ["Central Business District"],
+    "city": ["London"],
+    "postal_code": ["EC2A 3BX"],
+    "country": ["United Kingdom"],
+    "phone": ["+44 20 7946 0958"]
+})
+
+dim_counterparty = transform_dim_counterparty(df_counterparty, df_address)
+
+write_parquet_to_s3(
+    dim_counterparty, 
+    bucket="s3-transformation-bucket-team-galena",
+    key_prefix="dim_counterparty"
+)
 # dim_date
 df_dim_date = build_dim_date()
 
