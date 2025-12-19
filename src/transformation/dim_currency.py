@@ -1,5 +1,14 @@
 import pandas as pd
 import requests
+from src.transformation.transformer import read_most_recent_ingestion
+from src.transformation.utils.parser import attach_columns_to_dataframe
+
+DF_DESIGN_COLUMNS = [
+    "currency_id",
+    "currency_code",
+    "created_at",
+    "last_updated"
+]
 
 DIM_CURRENCY_COLUMNS = [
     "currency_id",
@@ -13,17 +22,16 @@ def get_currencies():
         response = requests.get("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json")
         currencies_dict = response.json()
         print(requests.__version__)
-        lower_dict = {k.lower(): v.lower() for k, v in currencies_dict.items()}
+        lower_dict = {k.upper(): v.lower() for k, v in currencies_dict.items()}
         return lower_dict
     except Exception as e:
         print(e.message, e.args)
 
 # function to create dim_currency from df_currency 
-def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
+def transform_dim_currency(currency: pd.DataFrame) -> pd.DataFrame:
 
-    # return empty dim_currency columns whens passed empty df_currency
-    if df_currency.empty:
-        return pd.DataFrame(columns=DIM_CURRENCY_COLUMNS)
+    # attach column names to currency df
+    df_currency = attach_columns_to_dataframe(currency, DF_DESIGN_COLUMNS)
     
     # create dim_currency df and add empty 'currency_name' column
     dim_currency = df_currency[
@@ -33,8 +41,8 @@ def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
         ]
     ].copy()
 
-    # convert currency_code to lowercase
-    dim_currency["currency_code"] = dim_currency["currency_code"].str.lower() 
+    # convert currency_id to numeric
+    dim_currency["currency_id"] = pd.to_numeric(dim_currency["currency_id"])
     
     # only keep unique currency_code rows to avoid duplicates
     dim_currency = (dim_currency.drop_duplicates(subset=["currency_code"]))
@@ -45,8 +53,10 @@ def transform_dim_currency(df_currency: pd.DataFrame) -> pd.DataFrame:
     invalid_codes = set(dim_currency["currency_code"]) - set(currencies.keys())
     if invalid_codes:
         raise ValueError(f"Invalid currency code: {invalid_codes}")
-    dim_currency["currency_code"] = dim_currency["currency_code"].str.lower() # convert currency_code to lowercase
+    dim_currency["currency_code"] = dim_currency["currency_code"].str.upper() # convert currency_code to uppercase
     dim_currency["currency_name"] = dim_currency["currency_code"].map(currencies) # map names to codes
 
-    return dim_currency 
+    # ensure correct column order
+    dim_currency = dim_currency[DIM_CURRENCY_COLUMNS]
 
+    return dim_currency 
