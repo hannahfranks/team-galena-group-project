@@ -31,6 +31,7 @@ def transform_dim_design(design: pd.DataFrame) -> pd.DataFrame:
     # check for missing values
     missing_values = (dim_design[DIM_DESIGN_COLUMNS].isna()) | (dim_design[DIM_DESIGN_COLUMNS] == "").any()
     rows_with_missing_values = missing_values.any(axis=1)
+    
     if rows_with_missing_values.any():
         msg = []
         for i, row in dim_design.loc[rows_with_missing_values].iterrows():
@@ -44,7 +45,7 @@ def transform_dim_design(design: pd.DataFrame) -> pd.DataFrame:
 
         error_message = "\n".join(msg)
         raise ValueError(error_message)
-
+    
     return dim_design
 
 

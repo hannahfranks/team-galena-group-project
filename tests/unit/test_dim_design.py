@@ -52,7 +52,6 @@ def test_transform_dim_design_standardises_design_name():
 
 # test 5
 def test_transform_dim_design_catches_missing_values():
-
     design = pd.DataFrame([
         [1, 2, 3],
         ["", "2023-11-28 09:51:09.985", "2025-10-10 09:58:09.712"],
@@ -61,6 +60,7 @@ def test_transform_dim_design_catches_missing_values():
         ["test1.json", None, "test3.json"],
         ["2023-01-14 09:14:09.775", "2024-01-16 09:14:09.775", "2025-11-16 09:14:09.775"]
     ]).T
-    
     with pytest.raises(ValueError):
         transform_dim_design(design)
+
+
