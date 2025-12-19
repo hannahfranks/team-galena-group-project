@@ -107,6 +107,7 @@ write_parquet_to_s3(
     dim_counterparty, 
     bucket="s3-transformation-bucket-team-galena",
     key_prefix="dim_counterparty"
+)
 # dim_date
 df_dim_date = build_dim_date()
 
