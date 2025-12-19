@@ -1,6 +1,8 @@
 from src.transformation.dim_location import transform_dim_location
 from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
+from src.transformation.dim_date import build_dim_date
+
 import boto3
 import pandas as pd
 from io import BytesIO
@@ -78,4 +80,13 @@ write_parquet_to_s3(
     dim_staff, 
     bucket="s3-transformation-bucket-team-galena",
     key_prefix="dim_staff"
+)
+
+# dim_date
+df_dim_date = build_dim_date()
+
+write_parquet_to_s3(
+    df_dim_date,
+    bucket="s3-transformation-bucket-team-galena",
+    key_prefix="dim_date"
 )
