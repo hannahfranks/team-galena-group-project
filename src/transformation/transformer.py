@@ -116,3 +116,10 @@ write_parquet_to_s3(
     bucket="s3-transformation-bucket-team-galena",
     key_prefix="dim_date"
 )
+
+df_fact_sales = read_most_recent_ingestion('sales_order')
+write_parquet_to_s3(
+    df_fact_sales,
+    bucket="s3-transformation-bucket-team-galena",
+    key_prefix="fact_sales_order"
+)
