@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from src.ingestion.ingest import get_table_names, extract_table_data
+from src.ingestion.ingest import get_table_names, extract_table_data, get_table_columns
 
 def test_get_table_names_returns_list_of_eleven_table_names():
     mock_conn = MagicMock()
@@ -21,3 +21,39 @@ def test_extract_table_data_returns_dict_of_len_11():
     result = extract_table_data(table_names, mock_conn)
     assert len(result.items()) == 11
     assert type(result) == dict
+    
+import pytest
+from unittest.mock import MagicMock
+
+from src.ingestion.ingest import get_table_columns
+
+
+def test_get_table_columns_success():
+    mock_conn = MagicMock()
+
+    mock_conn.run.return_value = [
+        ("sales_order_id",),
+        ("created_at",),
+        ("last_updated",),
+        ("design_id",),
+    ]
+
+    result = get_table_columns(mock_conn, "sales_order")
+
+    assert result == [
+        "sales_order_id",
+        "created_at",
+        "last_updated",
+        "design_id",
+    ]
+
+    mock_conn.run.assert_called_once_with(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = $1
+        AND table_name = $2
+        ORDER BY ordinal_position;
+    """,
+        ["public", "sales_order"],
+    )
