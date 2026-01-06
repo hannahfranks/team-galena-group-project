@@ -4,3 +4,5 @@ __pycache__/
 .terraform/
 *.tfstate
 *.tfstate.*
+src/ingestion/ingestion_lambda.zip
+build/
