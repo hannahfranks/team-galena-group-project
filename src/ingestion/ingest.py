@@ -70,6 +70,7 @@ def get_table_names(conn):
     table_names.remove('_prisma_migrations')
     return table_names
 
+# get list of column names for a table
 def get_table_columns(conn, table_name, schema="public"):
     query = f"""
         SELECT column_name
