@@ -18,6 +18,15 @@ DIM_DESIGN_COLUMNS = [
 
 def transform_dim_design(design: pd.DataFrame) -> pd.DataFrame:
 
+    # return empty df if passed empty df
+    if design.empty:
+        return pd.DataFrame(columns=[
+            "design_id",
+            "design_name",
+            "file_location",
+            "file_name"
+        ])
+
     # select columns from df_design for dim_design 
     dim_design = design[DIM_DESIGN_COLUMNS].copy()
 
