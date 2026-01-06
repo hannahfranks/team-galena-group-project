@@ -3,8 +3,8 @@ from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
 from src.transformation.dim_counterparty import transform_dim_counterparty
 from src.transformation.dim_date import build_dim_date
-from src.transformation.dim_date import build_dim_design
-from src.transformation.dim_date import build_dim_currency
+from src.transformation.dim_design import build_dim_design
+from src.transformation.dim_currency import build_dim_currency
 from src.transformation.dim_fact_sales import transform_fact_sales_order
 
 import boto3
