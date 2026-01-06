@@ -43,7 +43,7 @@ resource "aws_s3_bucket_notification" "ingestion_notification" {
     filter_suffix = ".parquet"
   }
   depends_on = [
-    aws_lambda_permission.allow_s3
+    aws_lambda_permission.allow_ingestion_s3_access
   ]
 }
 

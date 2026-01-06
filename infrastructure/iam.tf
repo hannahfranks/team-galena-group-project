@@ -191,3 +191,12 @@ resource "aws_iam_role_policy_attachment" "transformation_lambda_logs" {
     role = aws_iam_role.transformation_lambda_role.name
     policy_arn = aws_iam_policy.cloudwatch_logs.arn
 }
+
+# allow ingestion s3 to invoke transformation lambda
+resource "aws_lambda_permission" "allow_ingestion_s3_access" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.transformation_lambda.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.ingestion_bucket.arn
+}
