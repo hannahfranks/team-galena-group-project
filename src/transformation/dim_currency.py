@@ -30,11 +30,7 @@ def transform_dim_currency(currency: pd.DataFrame) -> pd.DataFrame:
 
     # return empty df if passed empty df
     if currency.empty:
-        return pd.DataFrame(columns=[
-            "currency_id",
-            "currency_code",
-            "currency_name"
-        ])
+        return pd.DataFrame(columns=DIM_CURRENCY_COLUMNS)
  
     # create dim_currency df copy 
     dim_currency = currency[
