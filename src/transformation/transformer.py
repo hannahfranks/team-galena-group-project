@@ -3,6 +3,8 @@ from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
 from src.transformation.dim_counterparty import transform_dim_counterparty
 from src.transformation.dim_date import build_dim_date
+from src.transformation.dim_date import build_dim_design
+from src.transformation.dim_date import build_dim_currency
 from src.transformation.dim_fact_sales import transform_fact_sales_order
 
 import boto3
@@ -84,6 +86,7 @@ def main_transformer():
         key_prefix="dim_date"
     )
 
+    # sales fact table 
     df_sales = read_most_recent_ingestion('sales_order')
     fact_sales = transform_fact_sales_order(df_sales)
     write_parquet_to_s3(
@@ -92,5 +95,22 @@ def main_transformer():
         key_prefix="fact_sales_order"
     )
 
-    #dim currency
-    #dim design
+    # dim currency
+    df_currency = read_most_recent_ingestion("currency")
+    dim_currency = build_dim_currency(df_currency)
+
+    write_parquet_to_s3(
+        dim_currency,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_currency"
+    )
+    
+    # dim design
+    df_design = read_most_recent_ingestion("design")
+    dim_design = build_dim_design(df_design)
+
+    write_parquet_to_s3(
+        dim_design,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_design"
+    )
