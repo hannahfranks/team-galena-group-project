@@ -24,36 +24,28 @@ def test_extract_table_data_returns_dict_of_len_11():
     
 import pytest
 from unittest.mock import MagicMock
-
 from src.ingestion.ingest import get_table_columns
-
 
 def test_get_table_columns_success():
     mock_conn = MagicMock()
-
     mock_conn.run.return_value = [
         ("sales_order_id",),
         ("created_at",),
         ("last_updated",),
         ("design_id",),
     ]
-
     result = get_table_columns(mock_conn, "sales_order")
-
     assert result == [
         "sales_order_id",
         "created_at",
         "last_updated",
         "design_id",
     ]
-
-    mock_conn.run.assert_called_once_with(
-        """
+    expected_query = """
         SELECT column_name
         FROM information_schema.columns
-        WHERE table_schema = $1
-        AND table_name = $2
+        WHERE table_schema = 'public'
+        AND table_name = 'sales_order'
         ORDER BY ordinal_position;
-    """,
-        ["public", "sales_order"],
-    )
+    """
+    mock_conn.run.assert_called_once_with(expected_query)
