@@ -43,16 +43,9 @@ def extract_s3_info(event):
 
     return s3_objects
 
-def transform_data(event, s3_objects):
+def transform_data():
     #transformation logic
-    if s3_objects:
-        for bucket, key in s3_objects:
-            logger.info("Processing S3 object: s3://%s/%s", bucket, key)
-
-    if "data" not in event:
-        raise ValueError("Missing 'data' key in event")
-    transformed = event["data"]
-    return transformed
+    main_transformer()
 
 def lambda_handler(event, context):
     logger.info("Transformation Lambda triggered")
@@ -68,10 +61,9 @@ def lambda_handler(event, context):
         logger.info("No S3 input file detected")
 
     try:
-        result = transform_data(event, s3_objects)
+        transform_data()
 
         logger.info("Transformation successful")
-        logger.info("Result: %s", result)
 
         return {
             "statusCode": 200,
@@ -114,7 +106,7 @@ def lambda_handler(event, context):
         # Re-raise so Lambda marks the execution as failed
         raise
     # perform transformations and upload to S3 transformation bucket 
-    main_transformer()
+    
 
     return {
         "statusCode": 200,
