@@ -175,7 +175,14 @@ resource "aws_iam_policy" "cloudwatch_logs" {
                 "logs:PutLogEvents"
             ]
             Resource = "*"
-        }
+        },
+            #SNS IAM policy/Permissions for cloudwatch alerts
+            {
+            "Sid": "AllowSNSPublish",
+            "Effect": "Allow",
+            "Action": "sns:Publish",
+            "Resource": "arn:aws:sns:REGION:ACCOUNT_ID:TOPIC_NAME"
+        },
         ]
     })
 }
