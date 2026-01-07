@@ -1,9 +1,7 @@
 import pandas as pd
 import requests
-from src.transformation.transformer import read_most_recent_ingestion
-from src.transformation.utils.parser import attach_columns_to_dataframe
 
-DF_DESIGN_COLUMNS = [
+DF_CURRENCY_COLUMNS = [
     "currency_id",
     "currency_code",
     "created_at",
@@ -30,11 +28,12 @@ def get_currencies():
 # function to create dim_currency from df_currency 
 def transform_dim_currency(currency: pd.DataFrame) -> pd.DataFrame:
 
-    # attach column names to currency df
-    df_currency = attach_columns_to_dataframe(currency, DF_DESIGN_COLUMNS)
-    
-    # create dim_currency df and add empty 'currency_name' column
-    dim_currency = df_currency[
+    # return empty df if passed empty df
+    if currency.empty:
+        return pd.DataFrame(columns=DIM_CURRENCY_COLUMNS)
+ 
+    # create dim_currency df copy 
+    dim_currency = currency[
         [
             "currency_id",
             "currency_code"

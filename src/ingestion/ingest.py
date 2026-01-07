@@ -70,6 +70,18 @@ def get_table_names(conn):
     table_names.remove('_prisma_migrations')
     return table_names
 
+# get list of column names for a table
+def get_table_columns(conn, table_name, schema="public"):
+    query = f"""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = '{schema}'
+        AND table_name = '{table_name}'
+        ORDER BY ordinal_position;
+    """
+    result = conn.run(query)
+    return [row[0] for row in result]
+
 # function to extract data from each table
 # use parameterized query to avoid sql injection
 def extract_table_data(table_names, conn):
@@ -106,16 +118,17 @@ def save_ingestion_timestamps(table_timestamps):
     )
 
 # function to write tables to s3 
-def save_tables_as_parquet(tables_data, bucket_name):
+def save_tables_as_parquet(conn,tables_data, bucket_name):
     
     table_timestamps = {}
 
     for table_name, rows in tables_data.items():
         if not rows:
             continue
-       
+            
         # Convert result rows to a DataFrame
-        df = pd.DataFrame(rows)
+        columns = get_table_columns(conn, table_name)
+        df = pd.DataFrame(rows, columns=columns)
 
         # Create timestamp for table
         timestamp = datetime.now().strftime("%d_%m_%Y_%H:%M:%S")
@@ -153,14 +166,11 @@ def lambda_handler(event, context):
     tables_data = extract_table_data(table_names, conn)
 
     # transform data to parquet and save to s3
-    save_tables_as_parquet(tables_data, "s3-ingestion-bucket-team-galena") 
+    save_tables_as_parquet(conn,tables_data, "s3-ingestion-bucket-team-galena") 
 
     # close db connection
     close_conn(conn) 
 
-lambda_handler('test', '')
-
-
-
-
+if __name__ == "__main__":
+    lambda_handler("test", "")
 

@@ -5,12 +5,13 @@ from src.transformation.dim_currency import transform_dim_currency, get_currenci
 # test 1
 def test_transform_dim_currency_returns_pd_df_with_correct_columns():
     # sample ingested currency table
-    currency = pd.DataFrame([
-        [1, 2, 3], 
-        ["EUR", "GBP", "USD"], 
-        ["2025-10-12", "2025-17-12", "2025-16-12"],
-        ["2025-18-12", "2025-18-12", "2025-18-12"]
-    ]).T
+    d = {
+        "currency_id": [1, 2, 3], 
+        "currency_code": ["EUR", "GBP", "USD"], 
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    }
+    currency = pd.DataFrame(data=d)
 
     result = transform_dim_currency(currency)
     assert isinstance(result, pd.DataFrame)
@@ -26,12 +27,13 @@ def test_transform_dim_currency_returns_df_with_columns_if_passed_empty_df():
 # test 3
 def test_transform_dim_currency_returns_correct_data_types():
     # sample ingested currency table
-    currency = pd.DataFrame([
-        [1, 2, 3], 
-        ["EUR", "GBP", "USD"], 
-        ["2025-10-12", "2025-17-12", "2025-16-12"],
-        ["2025-18-12", "2025-18-12", "2025-18-12"]
-    ]).T
+    d = {
+        "currency_id": [1, 2, 3], 
+        "currency_code": ["EUR", "GBP", "USD"], 
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    }
+    currency = pd.DataFrame(data=d)
     dim_currency = transform_dim_currency(currency)
     data_types = dim_currency.dtypes
     assert data_types["currency_id"] == int
@@ -41,12 +43,13 @@ def test_transform_dim_currency_returns_correct_data_types():
 # test 4
 def test_transform_dim_currency_creates_currency_name_based_on_currency_code():
     # sample ingested currency table
-    currency = pd.DataFrame([
-        [1, 2, 3], 
-        ["EUR", "GBP", "USD"], 
-        ["2025-10-12", "2025-17-12", "2025-16-12"],
-        ["2025-18-12", "2025-18-12", "2025-18-12"]
-    ]).T
+    d = {
+        "currency_id": [1, 2, 3], 
+        "currency_code": ["EUR", "GBP", "USD"], 
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    }
+    currency = pd.DataFrame(data=d)
     dim_currency = transform_dim_currency(currency)
     assert dim_currency["currency_name"].to_list() == ['euro', 'british pound', 'us dollar']
 
@@ -58,12 +61,13 @@ def test_get_currencies_returns_dict_of_upper_keys_with_lower_values():
 
 # test 6
 def test_transform_dim_currency_returns_no_duplicate_currencies():
-    currency = pd.DataFrame([
-        [1, 2, 3], 
-        ["EUR", "EUR", "USD"], 
-        ["2025-10-12", "2025-17-12", "2025-16-12"],
-        ["2025-18-12", "2025-18-12", "2025-18-12"]
-    ]).T
+    d = {
+        "currency_id": [1, 2, 3], 
+        "currency_code": ["EUR", "EUR", "USD"], 
+        "created_at": ["2025-10-12", "2025-17-12", "2025-16-12"],
+        "last_updated": ["2025-18-12", "2025-18-12", "2025-18-12"]
+    }
+    currency = pd.DataFrame(data=d)
     dim_currency = transform_dim_currency(currency)
     assert len(dim_currency) == 2
     assert dim_currency["currency_code"].tolist() == ['EUR', 'USD']

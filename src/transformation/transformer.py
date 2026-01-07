@@ -3,6 +3,9 @@ from src.transformation.utils.save_parquet_to_s3 import write_parquet_to_s3
 from src.transformation.dim_staff import transform_dim_staff
 from src.transformation.dim_counterparty import transform_dim_counterparty
 from src.transformation.dim_date import build_dim_date
+from src.transformation.dim_design import transform_dim_design
+from src.transformation.dim_currency import transform_dim_currency
+from src.transformation.dim_fact_sales import transform_fact_sales_order
 
 import boto3
 import pandas as pd
@@ -37,82 +40,77 @@ def read_most_recent_ingestion(table: str) -> pd.DataFrame:
 
     return pd.read_parquet(table_data) # read in parquet file
 
+def main_transformer():
+    #dim location
+    #get data from ingestion layer
+    df_address = read_most_recent_ingestion("address")
+    #transform 
+    dim_location = transform_dim_location(df_address)
+    #save to s3
+    write_parquet_to_s3(
+        dim_location,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_location"
+    )
+    
+    #dim staff
+    df_staff = read_most_recent_ingestion("staff")
+    df_department = read_most_recent_ingestion("department")
 
-# Transformation for dim_location
-df_address = pd.DataFrame({
-    "address_id": [1],
-    "address_line_1": ["123 High St"],
-    "address_line_2": [None],
-    "district": ["Central"],
-    "city": ["London"],
-    "postal_code": ["E1 6AN"],
-    "country": ["UK"],
-    "phone": ["0123456789"],
-    "created_at": ["2024-01-01"],
-    "last_updated": ["2024-01-02"],
-})
+    dim_staff = transform_dim_staff(df_staff, df_department)
 
-df_location = transform_dim_location(df_address)
+    write_parquet_to_s3(
+        dim_staff, 
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_staff"
+    )
+    
+    #dim counterparty
+    df_counterparty = read_most_recent_ingestion("counterparty")
+    df_address = read_most_recent_ingestion("address")
 
-write_parquet_to_s3(
-    df_location,
-    bucket="s3-transformation-bucket-team-galena",
-    key_prefix="dim_location"
-)
+    dim_counterparty = transform_dim_counterparty(df_counterparty, df_address)
 
-# transformation for dim_staff
-df_staff = pd.DataFrame({
-    "staff_id": [101, 102],
-    "first_name": ["Alice", "Bob"],
-    "last_name": ["Johnson", "Smith"],
-    "department_id": [1, 2],
-    "email_address": ["alice.johnson@company.com", "bob.smith@company.com"]
-})
+    write_parquet_to_s3(
+        dim_counterparty, 
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_counterparty"
+    )
+    
+    # dim_date
+    dim_date = build_dim_date()
 
-df_department = pd.DataFrame({
-    "department_id": [1, 2],
-    "department_name": ["Human Resources", "Engineering"],
-    "location": ["New York", "San Francisco"]
-})
+    write_parquet_to_s3(
+        dim_date,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_date"
+    )
 
-dim_staff = transform_dim_staff(df_staff, df_department)
+    # sales fact table 
+    df_sales = read_most_recent_ingestion('sales_order')
+    fact_sales = transform_fact_sales_order(df_sales)
+    write_parquet_to_s3(
+        fact_sales,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="fact_sales_order"
+    )
 
-write_parquet_to_s3(
-    dim_staff, 
-    bucket="s3-transformation-bucket-team-galena",
-    key_prefix="dim_staff"
-)
+    # dim currency
+    df_currency = read_most_recent_ingestion("currency")
+    dim_currency = transform_dim_currency(df_currency)
 
-# transformation for dim_counterparty
-df_counterparty = pd.DataFrame({
-    "counterparty_id": [1],
-    "counterparty_legal_name": ["Acme Corporation Ltd"],
-    "legal_address_id": [101]
-})        
+    write_parquet_to_s3(
+        dim_currency,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_currency"
+    )
+    
+    # dim design
+    df_design = read_most_recent_ingestion("design")
+    dim_design = transform_dim_design(df_design)
 
-df_address = pd.date_range({
-    "address_id": [101],
-    "address_line_1": ["123 Market Street"],
-    "address_line_2": ["Suite 400"],
-    "district": ["Central Business District"],
-    "city": ["London"],
-    "postal_code": ["EC2A 3BX"],
-    "country": ["United Kingdom"],
-    "phone": ["+44 20 7946 0958"]
-})
-
-dim_counterparty = transform_dim_counterparty(df_counterparty, df_address)
-
-write_parquet_to_s3(
-    dim_counterparty, 
-    bucket="s3-transformation-bucket-team-galena",
-    key_prefix="dim_counterparty"
-)
-# dim_date
-df_dim_date = build_dim_date()
-
-write_parquet_to_s3(
-    df_dim_date,
-    bucket="s3-transformation-bucket-team-galena",
-    key_prefix="dim_date"
-)
+    write_parquet_to_s3(
+        dim_design,
+        bucket="s3-transformation-bucket-team-galena",
+        key_prefix="dim_design"
+    )

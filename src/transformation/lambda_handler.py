@@ -5,6 +5,7 @@ import traceback
 import boto3
 import sys
 from urllib.parse import unquote_plus
+from src.transformation.transformer import main_transformer
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -112,3 +113,12 @@ def lambda_handler(event, context):
 
         # Re-raise so Lambda marks the execution as failed
         raise
+    # perform transformations and upload to S3 transformation bucket 
+    main_transformer()
+
+    return {
+        "statusCode": 200,
+    }
+
+if __name__ == "__main__":
+    lambda_handler("test", "")

@@ -47,7 +47,7 @@ def transform_dim_counterparty(df_counterparty: pd.DataFrame, df_address: pd.Dat
             "counterparty_legal_name",
             "legal_address_id" 
         ]
-    ].copy 
+    ].copy()
 
     df_address = df_address[
         [
@@ -60,7 +60,7 @@ def transform_dim_counterparty(df_counterparty: pd.DataFrame, df_address: pd.Dat
             "country",
             "phone"
         ]
-    ].copy
+    ].copy()
 
     df_merged = df_counterparty.merge(
         df_address,
