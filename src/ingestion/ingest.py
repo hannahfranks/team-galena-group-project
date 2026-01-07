@@ -70,16 +70,17 @@ def get_table_names(conn):
     table_names.remove('_prisma_migrations')
     return table_names
 
+# get list of column names for a table
 def get_table_columns(conn, table_name, schema="public"):
-    query = """
+    query = f"""
         SELECT column_name
         FROM information_schema.columns
-        WHERE table_schema = $1
-        AND table_name = $2
+        WHERE table_schema = '{schema}'
+        AND table_name = '{table_name}'
         ORDER BY ordinal_position;
     """
-    result = conn.run(query, [schema, table_name])
-    return [col[0] for col in result]
+    result = conn.run(query)
+    return [row[0] for row in result]
 
 # function to extract data from each table
 # use parameterized query to avoid sql injection
@@ -172,8 +173,4 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     lambda_handler("test", "")
-
-
-
-
 
