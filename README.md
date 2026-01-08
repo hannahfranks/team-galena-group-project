@@ -3,25 +3,25 @@
 In this group project, we created a data platform to **Extract** data from an operational database into a data lake, **Transform** the data into a star schema, and **Load** the remodelled it into a data warehouse hosted in AWS, allowing highly efficient **OLAP**. 
 
 ## Pipeline Overview 
-🔸 **Ingestion - Data Lake**
+🌊 **Ingestion - Data Lake** 
 - AWS Ingestion Lambda 
 - Triggered every 15 minutes using CloudWatch logs and EventBridge schedule
 - Retrieves db credentials from AWS Secrets Manager using boto3
 - Creates connection with PostgreSQL db using pg8000
 - Extracts tables and writes to S3 ingestion bucket with timestamped file names
 
-🔸 **Transformation**
+🪄 **Transformation** 
 - AWS Transformation Lambda invoked by each ingestion 
 - Loads most recently ingested tables using timestamps lookup file 
 - Wrangles and cleans data, then transforms into star schema
 - Writes transformed tables to S3 transformation bucket with timestamped file names
 
-🔸 **Data Warehouse - Star Schema**
+⭐️ **Data Warehouse - Star Schema**
 - AWS Warehouse Lambda triggered with each transformation
 - Loads most recently transformed dimension and fact tables
 - Writes new data to RDS PostgreSQL Data Warehouse
 
-🔸 **Data Analysis**
+📊 **Data Analysis** 
 - Visualisations in BI Tableau
 - Summary statistics and trends in the data
 
