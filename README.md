@@ -22,8 +22,7 @@ In this group project, we created a data platform to **Extract** data from an op
 - Writes new data to RDS PostgreSQL Data Warehouse
 
 📊 **Data Analysis** 
-- Visualisations in BI Tableau
-- Summary statistics and trends in the data
+- Visualisations of summary statistics and trends in the data
 
 ## Dataset 
 🔸 **DB name:** totesys<br>
